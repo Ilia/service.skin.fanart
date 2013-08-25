@@ -45,7 +45,7 @@ class Main:
         self.WINDOW = xbmcgui.Window(10000)
         while (not xbmc.abortRequested):
             if not xbmc.Player().isPlayingVideo() and not monitor.screensaver:
-                json_string = '{"jsonrpc": "2.0",  "id": 1, "method": "VideoLibrary.GetMovies", "params": {"properties": ["art"], "limits": {"end": %d},' % 1
+                json_string = '{"jsonrpc": "2.0",  "id": 1, "method": "VideoLibrary.GetMovies", "params": {"properties": ["art", "title", "year", "genre"], "limits": {"end": %d},' % 1
                 json_query = xbmc.executeJSONRPC('%s "sort": {"method": "random" }, "filter": {"field": "playcount", "operator": "lessthan", "value": "1"}}}' % json_string)
                 json_query = unicode(json_query, 'utf-8', errors='ignore')
                 json_query = simplejson.loads(json_query)
@@ -53,6 +53,9 @@ class Main:
                     item = json_query['result']['movies'][0]
                     art = item['art']
                     self.WINDOW.setProperty("Movie.Art(fanart)", art.get('fanart',''))
+                    self.WINDOW.setProperty("Movie.Title", item['title'])
+                    self.WINDOW.setProperty("Movie.Year", str(item['year']))
+                    self.WINDOW.setProperty("Movie.Genre", " / ".join(item['genre']))
                 del json_query
             xbmc.sleep(15000) 
 
