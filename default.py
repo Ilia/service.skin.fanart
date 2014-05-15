@@ -45,19 +45,29 @@ class Main:
         self.WINDOW = xbmcgui.Window(10000)
         while (not xbmc.abortRequested):
             if not xbmc.Player().isPlayingVideo() and not monitor.screensaver:
-                json_string = '{"jsonrpc": "2.0",  "id": 1, "method": "VideoLibrary.GetMovies", "params": {"properties": ["art", "title", "year", "genre"], "limits": {"end": %d},' % 1
-                json_query = xbmc.executeJSONRPC('%s "sort": {"method": "random" }, "filter": {"field": "playcount", "operator": "lessthan", "value": "1"}}}' % json_string)
-                json_query = unicode(json_query, 'utf-8', errors='ignore')
-                json_query = simplejson.loads(json_query)
-                if json_query.has_key('result') and json_query['result'].has_key('movies'):
-                    item = json_query['result']['movies'][0]
-                    art = item['art']
-                    self.WINDOW.setProperty("Movie.Art(fanart)", art.get('fanart',''))
-                    self.WINDOW.setProperty("Movie.Title", item['title'])
-                    self.WINDOW.setProperty("Movie.Year", str(item['year']))
-                    self.WINDOW.setProperty("Movie.Genre", " / ".join(item['genre']))
-                del json_query
-            xbmc.sleep(15000) 
+                while True:
+                    json_string = '{"jsonrpc": "2.0",  "id": 1, "method": "VideoLibrary.GetMovies", "params": {"properties": ["art", "title", "year", "genre"], "limits": {"end": %d},' % 1
+                    json_query = xbmc.executeJSONRPC('%s "sort": {"method": "random" }, "filter": {"field": "playcount", "operator": "lessthan", "value": "1"}}}' % json_string)
+                    json_query = unicode(json_query, 'utf-8', errors='ignore')
+                    json_query = simplejson.loads(json_query)
+                    if json_query.has_key('result') and json_query['result'].has_key('movies'):
+                        item = json_query['result']['movies'][0]
+                        art = item['art']
+                    del json_query
+                    if art.has_key('fanart'):
+                        break;
+            
+            if __addon__.getSetting("enabled") == "true":
+                self.WINDOW.setProperty("Movie.Art(fanart)", art.get('fanart',''))
+                self.WINDOW.setProperty("Movie.Title", item['title'])
+                self.WINDOW.setProperty("Movie.Year", str(item['year']))
+                self.WINDOW.setProperty("Movie.Genre", " / ".join(item['genre']))
+            else:
+                self.WINDOW.setProperty("Movie.Art(fanart)",'')
+                self.WINDOW.setProperty("Movie.Title",'')
+                self.WINDOW.setProperty("Movie.Year",'')
+                self.WINDOW.setProperty("Movie.Genre",'')
+            xbmc.sleep(3000) 
 
 
 class MyMonitor( xbmc.Monitor ):
@@ -69,11 +79,11 @@ class MyMonitor( xbmc.Monitor ):
         pass
 
     def onScreensaverDeactivated( self ):
-        print __addonid__ + " - screensaver Deactivated"
+        # print __addonid__ + " - screensaver Deactivated"
         self.screensaver = False 
 
     def onScreensaverActivated( self ):    
-        print __addonid__ + " - screensaver Activated"
+        # print __addonid__ + " - screensaver Activated"
         self.screensaver = True
 
     def onDatabaseUpdated( self, database ):
