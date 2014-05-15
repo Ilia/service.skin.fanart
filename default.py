@@ -53,9 +53,10 @@ class Main:
                     if json_query.has_key('result') and json_query['result'].has_key('movies'):
                         item = json_query['result']['movies'][0]
                         art = item['art']
+                        if art.has_key('fanart'):
+                            del json_query
+                            break;
                     del json_query
-                    if art.has_key('fanart'):
-                        break;
             
             if __addon__.getSetting("enabled") == "true":
                 self.WINDOW.setProperty("Movie.Art(fanart)", art.get('fanart',''))
