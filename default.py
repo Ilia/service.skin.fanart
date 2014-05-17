@@ -45,7 +45,8 @@ class Main:
         self.WINDOW = xbmcgui.Window(10000)
         while (not xbmc.abortRequested):
             if not xbmc.Player().isPlayingVideo() and not monitor.screensaver:
-                while True:
+                art = {}
+                while not art.has_key('fanart') and __addon__.getSetting("enabled") == "true":
                     json_string = '{"jsonrpc": "2.0",  "id": 1, "method": "VideoLibrary.GetMovies", "params": {"properties": ["art", "title", "year", "genre"], "limits": {"end": %d},' % 1
                     json_query = xbmc.executeJSONRPC('%s "sort": {"method": "random" }, "filter": {"field": "playcount", "operator": "lessthan", "value": "1"}}}' % json_string)
                     json_query = unicode(json_query, 'utf-8', errors='ignore')
@@ -53,22 +54,19 @@ class Main:
                     if json_query.has_key('result') and json_query['result'].has_key('movies'):
                         item = json_query['result']['movies'][0]
                         art = item['art']
-                        if art.has_key('fanart'):
-                            del json_query
-                            break;
-                    del json_query
+                        self.WINDOW.setProperty("Movie.Art(fanart)", art.get('fanart',''))
+                        self.WINDOW.setProperty("Movie.Title", item['title'])
+                        self.WINDOW.setProperty("Movie.Year", str(item['year']))
+                        self.WINDOW.setProperty("Movie.Genre", " / ".join(item['genre']))
+                    else:
+                        break
             
-            if __addon__.getSetting("enabled") == "true":
-                self.WINDOW.setProperty("Movie.Art(fanart)", art.get('fanart',''))
-                self.WINDOW.setProperty("Movie.Title", item['title'])
-                self.WINDOW.setProperty("Movie.Year", str(item['year']))
-                self.WINDOW.setProperty("Movie.Genre", " / ".join(item['genre']))
-            else:
-                self.WINDOW.setProperty("Movie.Art(fanart)",'')
-                self.WINDOW.setProperty("Movie.Title",'')
-                self.WINDOW.setProperty("Movie.Year",'')
-                self.WINDOW.setProperty("Movie.Genre",'')
-            xbmc.sleep(3000) 
+                if __addon__.getSetting("enabled") == "false":
+                    self.WINDOW.setProperty("Movie.Art(fanart)",'')
+                    self.WINDOW.setProperty("Movie.Title",'')
+                    self.WINDOW.setProperty("Movie.Year",'')
+                    self.WINDOW.setProperty("Movie.Genre",'')
+            xbmc.sleep(15000) 
 
 
 class MyMonitor( xbmc.Monitor ):
