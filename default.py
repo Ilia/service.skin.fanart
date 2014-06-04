@@ -40,6 +40,10 @@ __addonid__      = __addon__.getAddonInfo('id')
 __addonname__    = __addon__.getAddonInfo('name')
 __localize__    = __addon__.getLocalizedString
 
+def log(txt):
+    message = '%s: %s' % (__addonname__, txt.encode('ascii', 'ignore'))
+    xbmc.log(msg=message, level=xbmc.LOGDEBUG)
+
 class Main:
     def __init__(self):
         try:
@@ -59,11 +63,8 @@ class Main:
     def _fetch_movies(self):
         self.WINDOW = xbmcgui.Window(10000)
 
-        if self.WINDOW.getProperty('SkinFanartPause'):
-            return
-
         while (not xbmc.abortRequested):
-            if not xbmc.Player().isPlayingVideo() and not monitor.screensaver:
+            if not xbmc.Player().isPlayingVideo() and not monitor.screensaver and not self.WINDOW.getProperty('SkinFanartPause'):
                 art = {}
                 
                 while not art.has_key('fanart') and __addon__.getSetting("enabled") == "true":
