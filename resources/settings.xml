@@ -2,6 +2,6 @@
 <settings>
     <category label="Settings">
         <setting label="Enabled" type="bool" id="enabled" default="true"/>
-        <setting label="Movie Rating" type="bool" id="enable" default="true"/>
+        <!-- setting label="Movie Rating" type="bool" id="enable" default="true"/ -->
     </category>
 </settings>
