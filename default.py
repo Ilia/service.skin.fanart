@@ -77,13 +77,14 @@ class Main:
                         art = item['art']
                         play = 'XBMC.RunScript(' + __addonid__ + ',movieid=' + str(item.get('movieid')) + ')'
 
-                        self.WINDOW.setProperty("Movie.Art(fanart)", art.get('fanart',''))
-                        self.WINDOW.setProperty("Movie.Art(poster)", art.get('poster',''))
-                        self.WINDOW.setProperty("Movie.Title", item['title'])
-                        self.WINDOW.setProperty("Movie.File", item['file'])
-                        self.WINDOW.setProperty("Movie.Year", str(item['year']))
-                        self.WINDOW.setProperty("Movie.Genre", " / ".join(item['genre']))
-                        self.WINDOW.setProperty("Movie.Play", play)
+                        if art.has_key('fanart'):
+                            self.WINDOW.setProperty("Movie.Art(fanart)", art.get('fanart',''))
+                            self.WINDOW.setProperty("Movie.Art(poster)", art.get('poster',''))
+                            self.WINDOW.setProperty("Movie.Title", item['title'])
+                            self.WINDOW.setProperty("Movie.File", item['file'])
+                            self.WINDOW.setProperty("Movie.Year", str(item['year']))
+                            self.WINDOW.setProperty("Movie.Genre", " / ".join(item['genre']))
+                            self.WINDOW.setProperty("Movie.Play", play)
 
                         del json_query
                     else:
